@@ -23,6 +23,44 @@ module.exports.cargar = function(servidorExpress, laLogica){
         console.log( " * GET /prueba " )
         respuesta.send("¡Funciona!")
         
-    }) // put /mediciones
+    }) // 
+
+
+    // .......................................................
+    // POST /mapa
+    // .......................................................
+    servidorExpress.post('/mapa', async function( peticion, respuesta ){
+        console.log( " * POST /mapa" )
+       
+        try{
+           console.log(peticion.body);
+            var json = JSON.parse(peticion.body);
+            let idMapa = json["idMapa"]
+            let imagen = json["imagen"]
+            if(idMapa==null || imagen==null){
+                // no estan todo los parametros obligatorios
+                respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
+                return
+            }else{
+               
+                // todo ok 
+                await laLogica.guardarMapa(idMapa,imagen)
+                respuesta.status(200).send()
+                return 
+               
+            }
+
+        }catch(error){
+            if(error.errno == 1452){ // 1452 es el codigo de error en una clave ajena
+                respuesta.status(500).send( JSON.stringify( {mensaje:"No existe un mapa con ese id"} ) )
+            }else{
+               
+                respuesta.status(500).send( JSON.stringify( {mensaje:"Error desconocido"} ) )
+            }
+        }
+        
+    }) // 
+
+
 
 }

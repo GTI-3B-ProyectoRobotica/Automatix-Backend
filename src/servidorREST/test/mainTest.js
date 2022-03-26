@@ -26,7 +26,7 @@ var Logica = require('../../logica/Logica.js');
 // ........................................................
 // main ()
 // ........................................................
-describe( "==================================================\nTest 1 RECURSO MEDICION\n==================================================", function() {
+describe( "==================================================\n\t\t\t Test\n  ==================================================", function() {
     
   
     var laLogica;
@@ -39,58 +39,101 @@ describe( "==================================================\nTest 1 RECURSO ME
    
         reglas.cargar(app,laLogica)
     })
-// despues de cada test limpiamos el sinon
-      afterEach(()=>{
+    // despues de cada test limpiamos el sinon
+    afterEach(()=>{
         sinon.restore();
     })
 
-    it("Prueba",async function(){
-        assert.equal(2,2)
-    })
-
-  /*  
-    context('GET /prueba--------------------------------------------------', ()=>{
-        let obtenerStub, errorStub;
-
-        it('Obtener mediciones devuelve un array', (done)=>{
+    it('GET/prueba', function (done){
         
-            // si obtener mediciones devuelve un array de mediciones esperamos un 200 y un formato json en el body
-            let resultadoMediciones = new Array();
-            resultadoMediciones.push(new Modelo.Medicion(null, 50, '2021-09-29 01:00:00', new Modelo.Posicion(30,30), 29, 'GTI-3A-1',1));
-            resultadoMediciones.push(new Modelo.Medicion(null, 50, '2021-09-29 02:00:00', new Modelo.Posicion(30,30), 29, 'GTI-3A-1',2));
-           
-            let jsonEsperado =  [{
-                fechaHora: '2021-09-29 01:00:00',
-                posMedicion: { latitud: 30, longitud: 30 },
-                valor: 50,
-                idUsuario: 29,
-                uuidSensor: 'GTI-3A-1',
-                tipoGas: 1
-              },
-              {
-                fechaHora: '2021-09-29 02:00:00',
-                posMedicion: { latitud: 30, longitud: 30 },
-                valor: 50,
-                idUsuario: 29,
-                uuidSensor: 'GTI-3A-1',
-                tipoGas: 2
-              }]
-
-            obtenerStub = sinon.stub(laLogica, 'obtenerTodasMediciones').resolves(resultadoMediciones);
-            
-            request(app).get('/mediciones')
-                .expect(200) // esperamos un 200
-                .end((err, response)=>{
-
-                    expect(response.statusCode).equal(200)
-                    expect(obtenerStub).to.have.been.calledOnce; // se llamo a obtenerTodasMediciones
-                    expect(response.body.length).equal(2); // json de 2 elementos
-                    expect(response.body).to.eql(jsonEsperado); // json bien montado
-                    done();
-                })
-        })
+        let publicarStub = sinon.stub(laLogica, 'guardarMapa').resolves({});
+        request(app).get('/prueba')
+            .expect(200)
+            .end((err, response)=>{
+                done(err)
+            })
     })
-*/
+
+    it('POST/mapa publicar mapa correcto devuelve 200', function (done){
+        
+        // lo que le paso a la funcion
+        let bodyPost ={
+                    "idMapa":1, 
+                    "imagen":"adfjij3km4idn8nmoca93j32inaosif083ih2hr8fn489n498ng384..."
+                }
+        // lo que espero con que se llame al metodo publicar 
+        let idMapaEsperable = 1
+        let imagenEsperable = "adfjij3km4idn8nmoca93j32inaosif083ih2hr8fn489n498ng384..."
+
+        let publicarStub = sinon.stub(laLogica, 'guardarMapa').resolves({});
+
+        request(app).post('/mapa')
+            .send(bodyPost)
+            .expect(200)
+            .end((err, response)=>{
+
+                let parametrosFuncion = publicarStub.args[0] // se llama a la funcion los parametros eseprables
+
+                expect(publicarStub).to.have.been.calledOnce; // se llamo a guardarMapa
+                expect(parametrosFuncion[0]).to.eql(idMapaEsperable)// mediciones que se le pasan a publicar mediciones
+                expect(parametrosFuncion[1]).to.eql(imagenEsperable)// mediciones que se le pasan a publicar mediciones
+                expect(response.statusCode).equal(200)
+                done()
+            })
+    })
+    
+    it('POST/mapa publicar mapa con idMapa no existente devuelve 500', function(done){
+        
+        // lo que le paso a la funcion
+        let bodyPost ={
+                    "idMapa":-1, 
+                    "imagen":"adfjij3km4idn8nmoca93j32inaosif083ih2hr8fn489n498ng384..."
+                }
+        // lo que espero con que se llame al metodo publicar 
+        let idMapaEsperable = -1
+        let imagenEsperable = "adfjij3km4idn8nmoca93j32inaosif083ih2hr8fn489n498ng384..."
+
+        let publicarStub = sinon.stub(laLogica, 'guardarMapa').rejects({errno:1452});
+
+        request(app).post('/mapa')
+            .send(bodyPost)
+            .expect(500)
+            .end((err, response)=>{
+
+                let parametrosFuncion = publicarStub.args[0] // se llama a la funcion los parametros eseprables
+
+                expect(publicarStub).to.have.been.calledOnce; // se llamo a guardarMapa
+                expect(parametrosFuncion[0]).to.eql(idMapaEsperable)// mediciones que se le pasan a publicar mediciones
+                expect(parametrosFuncion[1]).to.eql(imagenEsperable)// mediciones que se le pasan a publicar mediciones
+                expect(response.statusCode).equal(500)
+                expect(response.text).equal('{"mensaje":"No existe un mapa con ese id"}'); // mensaje de ok
+                done();
+            })
+    })
+   
+    it('POST/mapa publicar mapa sin todos los parametros obligatorios devuelve 400',function (done){
+    
+        // lo que le paso a la funcion
+        let bodyPost ={
+                    "idMapa":1, 
+                }
+        
+        let publicarStub = sinon.stub(laLogica, 'guardarMapa').resolves({});
+
+        request(app).post('/mapa')
+            .send(bodyPost)
+            .expect(400)
+            .end((err, response)=>{
+
+                expect(response.statusCode).equal(400)
+                expect(publicarStub).to.not.have.been.calledOnce; // no se llamo a guardarMapa
+                expect(response.text).equal('{"mensaje":"Falta algun parametro"}'); // mensaje de ok
+                done();
+            })
+    })
+
+ 
+
    
 
 }) // describe

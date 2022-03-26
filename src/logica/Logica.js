@@ -74,7 +74,7 @@ module.exports = class Logica {
      * @param idMapa id al mapa que hace referencia
      * 
      */
-     guardarMapa( imagenBase64, idMapa) {
+     guardarMapa( idMapa, imagenBase64) {
         var textoSQL ='update '+BDConstantes.TABLA_MAPA.NOMBRE_TABLA +' set ' + BDConstantes.TABLA_MAPA.IMAGEN + '=? where '+BDConstantes.TABLA_MAPA.ID+'=?';
         let inserts = [imagenBase64,idMapa]
         let sql = mysql.format(textoSQL, inserts);
@@ -82,12 +82,17 @@ module.exports = class Logica {
             this.laConexion.query( 
                 sql,
                 function( err,res,fields ) {
-                    
                     if(!err){
                         // return 
-                        resolver(res)
+                        if(res.affectedRows == 0){
+                            rechazar({errno:1452})
+                        }else{
+                            resolver(res)
+                        }
+                        
     
                     }else{
+                        
                         rechazar(err)
                     }
                     

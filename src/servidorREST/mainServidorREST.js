@@ -42,6 +42,7 @@ function cargarLogica(){
 // .....................................................................
 // main()
 // .....................................................................
+
 async function main() {
     // importamos la logica
     //var laLogica = await cargarLogica( "../bd/datos.bd" ) // base de datos sqlite
