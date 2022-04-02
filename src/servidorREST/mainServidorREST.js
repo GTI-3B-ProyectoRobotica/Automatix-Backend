@@ -57,11 +57,20 @@ async function main() {
     
     // permitir petciones externas (cors)
     servidorExpress.use(cors())
+    
     // cargo las reglas REST
     var reglas = require("./ReglasREST.js")
    
     reglas.cargar(servidorExpress,laLogica)
  
+    servidorExpress.use((req, res, next) => {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+        res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+        res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+        next();
+    });
+
     // arrancao el servidor
     var servicio = servidorExpress.listen( 8080, function() {
         console.log( "servidor REST escuchando en el puerto 8080 ")

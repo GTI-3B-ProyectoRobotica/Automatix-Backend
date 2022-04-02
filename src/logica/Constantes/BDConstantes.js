@@ -19,8 +19,9 @@ class TABLA_MAPA{
 class TABLA_ZONAS{
 
    
-    static NOMBRE_TABLA = "zonas";
+    static NOMBRE_TABLA = "zona";
     static NOMBRE = "nombre";
+    static MAPA = "mapa";
     static X_SUPERIOR = "xSuperior";
     static Y_SUPERIOR = "ySuperior";
     static X_INFERIOR = "xInferior";

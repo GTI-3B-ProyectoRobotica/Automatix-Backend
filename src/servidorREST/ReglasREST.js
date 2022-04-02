@@ -61,6 +61,42 @@ module.exports.cargar = function(servidorExpress, laLogica){
         
     }) // 
 
+    // .......................................................
+    // GET /zona/llegada?idMapa
+    // .......................................................
+    servidorExpress.get('/zona/llegada', async function( peticion, respuesta ){
+        console.log( " * GET /zona/llegada?idMapa" )
+       
+        try{
+
+            let idMapa = peticion.query.idMapa
+            if(idMapa==null){
+                // no estan todo los parametros obligatorios
+                respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
+                return
+            }else{
+               
+                // llamada a BD
+                var resultado = await laLogica.getPosicionZonaLLegadaProductosByIdMapa(idMapa)
+
+                // no hay elementos
+                if(resultado.length == 0){
+                    respuesta.status(500).send( JSON.stringify( {mensaje:"Ese mapa no tiene una zona de llegada asignada"} ) )
+                }
+
+                // todo ok
+                respuesta.status(200).send(resultado[0])
+                return 
+               
+            }
+
+        }catch(error){
+            respuesta.status(500).send( JSON.stringify( {mensaje:"Error desconocido"} ) )
+            
+        }
+        
+    }) // 
+
 
 
 }

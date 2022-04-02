@@ -103,6 +103,45 @@ module.exports = class Logica {
     } // ()guardarMapa
 
 
+    // .................................................................
+    // 
+    // idMapa:N -->
+    // getPosicionZonaLLegadaProductosByIdMapa() --> 
+    // .................................................................
+    /**
+     * toma la posicion de la zona de llegada de paquetes gracias a la ID
+     * 
+     * @param idMapa id al mapa que hace referencia
+     * 
+     */
+     getPosicionZonaLLegadaProductosByIdMapa( idMapa) {
+        var textoSQL ='select * from '+BDConstantes.TABLA_ZONAS.NOMBRE_TABLA +' where ' + BDConstantes.TABLA_ZONAS.MAPA + '=?';
+        let inserts = [idMapa]
+        let sql = mysql.format(textoSQL, inserts);
+        return new Promise( (resolver, rechazar) => {
+            this.laConexion.query( 
+                sql,
+                function( err,res,fields ) {
+                    if(!err){
+                        // return 
+                        if(res.affectedRows == 0){
+                            rechazar({errno:1452})
+                        }else{
+                            resolver(res)
+                        }
+                        
+    
+                    }else{
+                        
+                        rechazar(err)
+                    }
+                    
+                }
+               )//query
+            })// promise
+
+    } // ()getPosicionZonaLLegadaProductosByIdMapa
+
 } // class
 // .....................................................................
 // .....................................................................
