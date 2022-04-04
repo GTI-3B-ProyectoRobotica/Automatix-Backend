@@ -98,5 +98,42 @@ module.exports.cargar = function(servidorExpress, laLogica){
     }) // 
 
 
+    // .......................................................
+    // GET /mapa?idMapa
+    // .......................................................
+    servidorExpress.get('/mapa', async function( peticion, respuesta ){
+        console.log( " * GET /mapa?idMapa" )
+       
+        try{
+
+            let idMapa = peticion.query.idMapa
+            if(idMapa==null){
+                // no estan todo los parametros obligatorios
+                respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
+                return
+            }else{
+               
+                // llamada a BD
+                var resultado = await laLogica.obtenerMapa(idMapa)
+
+                // no hay elementos
+                if(resultado.length == 0){
+                    respuesta.status(500).send( JSON.stringify( {mensaje:"No existe un mapa con esa id"} ) )
+                }
+
+                // todo ok
+                respuesta.status(200).send(resultado[0])
+                return 
+               
+            }
+
+        }catch(error){
+            respuesta.status(500).send( JSON.stringify( {mensaje:"Error desconocido"} ) )
+            
+        }
+        
+    }) // 
+
+
 
 }

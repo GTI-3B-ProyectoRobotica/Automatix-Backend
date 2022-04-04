@@ -106,7 +106,7 @@ module.exports = class Logica {
     // .................................................................
     // 
     // idMapa:N -->
-    // getPosicionZonaLLegadaProductosByIdMapa() --> 
+    // getPosicionZonaLLegadaProductosByIdMapa() --> {xI,xS,yI,yS}
     // .................................................................
     /**
      * toma la posicion de la zona de llegada de paquetes gracias a la ID
@@ -141,6 +141,47 @@ module.exports = class Logica {
             })// promise
 
     } // ()getPosicionZonaLLegadaProductosByIdMapa
+
+
+
+    // .................................................................
+    // 
+    // idMapa:N -->
+    // obtenerMapa() --> Mapa
+    // .................................................................
+    /**
+     * Obtener la informacion de un mapa 
+     * 
+     * @param idMapa id al mapa que hace referencia
+     * @returns La informacion del mapa {id:N,imagen:Texto,yOrigen,xOrigen}
+     */
+     obtenerMapa( idMapa) {
+        var textoSQL ='select  id,xOrigen,yOrigen,CONVERT(imagen USING utf8) as imagen from '+BDConstantes.TABLA_MAPA.NOMBRE_TABLA +' where ' + BDConstantes.TABLA_MAPA.ID + '=?';
+        let inserts = [idMapa]
+        let sql = mysql.format(textoSQL, inserts);
+        return new Promise( (resolver, rechazar) => {
+            this.laConexion.query( 
+                sql,
+                function( err,res,fields ) {
+                    if(!err){
+                        // return 
+                        if(res.affectedRows == 0){
+                            rechazar({errno:1452})
+                        }else{
+                            resolver(res)
+                        }
+                        
+    
+                    }else{
+                        
+                        rechazar(err)
+                    }
+                    
+                }
+               )//query
+            })// promise
+
+    } // ()obtenerMapa
 
 } // class
 // .....................................................................
