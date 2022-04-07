@@ -64,7 +64,7 @@ module.exports = class Logica {
 
     // .................................................................
     // 
-    // imagenBase64:Texto, idMapa:N -->
+    // imagenBase64:Texto, idMapa:N, resolucion:R -->
     // guardarMapa() --> 
     // .................................................................
     /**
@@ -72,12 +72,14 @@ module.exports = class Logica {
      * 
      * @param imagenBase64 texto plano de la imagen
      * @param idMapa id al mapa que hace referencia
+     * @param resolucion la resolucion de la imagen my_map
      * 
      */
-     guardarMapa( idMapa, imagenBase64) {
-        var textoSQL ='update '+BDConstantes.TABLA_MAPA.NOMBRE_TABLA +' set ' + BDConstantes.TABLA_MAPA.IMAGEN + '=? where '+BDConstantes.TABLA_MAPA.ID+'=?';
-        let inserts = [imagenBase64,idMapa]
+     guardarMapa( idMapa, imagenBase64, resolucion) {
+        var textoSQL ='update '+BDConstantes.TABLA_MAPA.NOMBRE_TABLA +' set ' + BDConstantes.TABLA_MAPA.IMAGEN  + '=?,'+ BDConstantes.TABLA_MAPA.RESOLUCION + '=? where '+BDConstantes.TABLA_MAPA.ID+'=?';
+        let inserts = [imagenBase64,resolucion,idMapa]
         let sql = mysql.format(textoSQL, inserts);
+        console.log(sql)
         return new Promise( (resolver, rechazar) => {
             this.laConexion.query( 
                 sql,
@@ -153,10 +155,10 @@ module.exports = class Logica {
      * Obtener la informacion de un mapa 
      * 
      * @param idMapa id al mapa que hace referencia
-     * @returns La informacion del mapa {id:N,imagen:Texto,yOrigen,xOrigen}
+     * @returns La informacion del mapa {id:N,imagen:Texto,resolucion:N}
      */
      obtenerMapa( idMapa) {
-        var textoSQL ='select  id,xOrigen,yOrigen,CONVERT(imagen USING utf8) as imagen from '+BDConstantes.TABLA_MAPA.NOMBRE_TABLA +' where ' + BDConstantes.TABLA_MAPA.ID + '=?';
+        var textoSQL ='select  id,resolucion,CONVERT(imagen USING utf8) as imagen from '+BDConstantes.TABLA_MAPA.NOMBRE_TABLA +' where ' + BDConstantes.TABLA_MAPA.ID + '=?';
         let inserts = [idMapa]
         let sql = mysql.format(textoSQL, inserts);
         return new Promise( (resolver, rechazar) => {

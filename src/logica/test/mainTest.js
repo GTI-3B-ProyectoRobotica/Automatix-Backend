@@ -33,11 +33,12 @@ describe( "Test ", function() {
 
         var imagenBase64 = "base64imagen"
         var idMapa = 1;
-        await laLogica.guardarMapa(imagenBase64, idMapa)
+        var resolucion = 0.5
+        await laLogica.guardarMapa(idMapa,imagenBase64, resolucion)
 
         assert.equal(stub.calledOnce,true,"No se llamo al metodo query?")
         // comprobamos que se crea bien la sentencia sql
-        assert.equal(stub.calledWith("update mapa set imagen='base64imagen' where id=1"),true,"No se monto bien la query?")
+        assert.equal(stub.calledWith("update mapa set imagen='base64imagen',resolucion=0.5 where id=1"),true,"No se monto bien la query?")
 
     })// it
 

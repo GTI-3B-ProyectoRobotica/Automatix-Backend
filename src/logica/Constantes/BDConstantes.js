@@ -12,6 +12,7 @@ class TABLA_MAPA{
     static NOMBRE_TABLA = "mapa";
     static ID = "id";
     static IMAGEN = "imagen";
+    static RESOLUCION = "resolucion"
 
 }
 

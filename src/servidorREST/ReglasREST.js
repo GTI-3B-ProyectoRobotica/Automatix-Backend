@@ -35,16 +35,17 @@ module.exports.cargar = function(servidorExpress, laLogica){
         try{
            console.log(peticion.body);
             var json = JSON.parse(peticion.body);
-            let idMapa = json["idMapa"]
-            let imagen = json["imagen"]
-            if(idMapa==null || imagen==null){
+            let idMapa = json['idMapa']
+            let imagen = json['imagen']
+            let resolucion = json['resolucion']
+            if(idMapa==null || imagen==null || resolucion==null){
                 // no estan todo los parametros obligatorios
                 respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
                 return
             }else{
                
                 // todo ok 
-                await laLogica.guardarMapa(idMapa,imagen)
+                await laLogica.guardarMapa(idMapa,imagen,resolucion)
                 respuesta.status(200).send()
                 return 
                

@@ -59,11 +59,13 @@ describe( "==================================================\n\t\t\t Test\n  ==
         // lo que le paso a la funcion
         let bodyPost ={
                     "idMapa":1, 
-                    "imagen":"adfjij3km4idn8nmoca93j32inaosif083ih2hr8fn489n498ng384..."
+                    "imagen":"adfjij3km4idn8nmoca93j32inaosif083ih2hr8fn489n498ng384...",
+                    "resolucion":0.5
                 }
         // lo que espero con que se llame al metodo publicar 
         let idMapaEsperable = 1
         let imagenEsperable = "adfjij3km4idn8nmoca93j32inaosif083ih2hr8fn489n498ng384..."
+        let resolucion = 0.5
 
         let publicarStub = sinon.stub(laLogica, 'guardarMapa').resolves({});
 
@@ -77,6 +79,7 @@ describe( "==================================================\n\t\t\t Test\n  ==
                 expect(publicarStub).to.have.been.calledOnce; // se llamo a guardarMapa
                 expect(parametrosFuncion[0]).to.eql(idMapaEsperable)// mediciones que se le pasan a publicar mediciones
                 expect(parametrosFuncion[1]).to.eql(imagenEsperable)// mediciones que se le pasan a publicar mediciones
+                expect(parametrosFuncion[2]).to.eql(resolucion)// resolucion que se le pasa a publicar mediciones
                 expect(response.statusCode).equal(200)
                 done()
             })
@@ -87,11 +90,13 @@ describe( "==================================================\n\t\t\t Test\n  ==
         // lo que le paso a la funcion
         let bodyPost ={
                     "idMapa":-1, 
-                    "imagen":"adfjij3km4idn8nmoca93j32inaosif083ih2hr8fn489n498ng384..."
+                    "imagen":"adfjij3km4idn8nmoca93j32inaosif083ih2hr8fn489n498ng384...",
+                    "resolucion":0.5
                 }
         // lo que espero con que se llame al metodo publicar 
         let idMapaEsperable = -1
         let imagenEsperable = "adfjij3km4idn8nmoca93j32inaosif083ih2hr8fn489n498ng384..."
+        let resolucion = 0.5
 
         let publicarStub = sinon.stub(laLogica, 'guardarMapa').rejects({errno:1452});
 
@@ -105,6 +110,7 @@ describe( "==================================================\n\t\t\t Test\n  ==
                 expect(publicarStub).to.have.been.calledOnce; // se llamo a guardarMapa
                 expect(parametrosFuncion[0]).to.eql(idMapaEsperable)// mediciones que se le pasan a publicar mediciones
                 expect(parametrosFuncion[1]).to.eql(imagenEsperable)// mediciones que se le pasan a publicar mediciones
+                expect(parametrosFuncion[2]).to.eql(resolucion)// resolucion que se le pasa a publicar mediciones
                 expect(response.statusCode).equal(500)
                 expect(response.text).equal('{"mensaje":"No existe un mapa con ese id"}'); // mensaje de ok
                 done();
