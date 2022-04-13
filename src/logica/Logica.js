@@ -158,7 +158,19 @@ module.exports = class Logica {
      * @returns La informacion del mapa {id:N,imagen:Texto,resolucion:N}
      */
      obtenerMapa( idMapa) {
-        var textoSQL ='select  id,resolucion,CONVERT(imagen USING utf8) as imagen from '+BDConstantes.TABLA_MAPA.NOMBRE_TABLA +' where ' + BDConstantes.TABLA_MAPA.ID + '=?';
+        var textoSQL ='select ' +
+        BDConstantes.TABLA_MAPA.NOMBRE_TABLA+'.'+BDConstantes.TABLA_MAPA.ID+","+
+        BDConstantes.TABLA_MAPA.NOMBRE_TABLA+'.'+BDConstantes.TABLA_MAPA.RESOLUCION+', CONVERT('+
+        BDConstantes.TABLA_MAPA.NOMBRE_TABLA+'.'+BDConstantes.TABLA_MAPA.IMAGEN+' USING utf8) as imagen, ' +
+        BDConstantes.TABLA_ZONAS.NOMBRE_TABLA+"."+BDConstantes.TABLA_ZONAS.NOMBRE+","+
+        BDConstantes.TABLA_ZONAS.NOMBRE_TABLA+"."+BDConstantes.TABLA_ZONAS.X_INFERIOR+","+
+        BDConstantes.TABLA_ZONAS.NOMBRE_TABLA+"."+BDConstantes.TABLA_ZONAS.Y_SUPERIOR+","+
+        BDConstantes.TABLA_ZONAS.NOMBRE_TABLA+"."+BDConstantes.TABLA_ZONAS.X_SUPERIOR+","+
+        BDConstantes.TABLA_ZONAS.NOMBRE_TABLA+"."+BDConstantes.TABLA_ZONAS.Y_INFERIOR+
+        ' from '+
+        BDConstantes.TABLA_MAPA.NOMBRE_TABLA +' left join ' + BDConstantes.TABLA_ZONAS.NOMBRE_TABLA + ' on ' +
+        BDConstantes.TABLA_MAPA.NOMBRE_TABLA+'.id = '+ BDConstantes.TABLA_ZONAS.NOMBRE_TABLA+'.mapa where '+
+        BDConstantes.TABLA_MAPA.ID + '=?';
         let inserts = [idMapa]
         let sql = mysql.format(textoSQL, inserts);
         return new Promise( (resolver, rechazar) => {
@@ -167,11 +179,28 @@ module.exports = class Logica {
                 function( err,res,fields ) {
                     if(!err){
                         // return 
-                        if(res.affectedRows == 0){
-                            rechazar({errno:1452})
-                        }else{
-                            resolver(res)
+                        // al ser un left join se duplica los datos comunes, pasamos las zonas a un array
+                        let resultado = {
+                            "id":res[0].id,
+                            "imagen":res[0].imagen,
+                            "resolucion":res[0].resolucion,
+                            "zonas":[]
+
                         }
+                       // si tiene zonas añadirlas al array
+                       if(res[0].xSuperior !=null){
+                            res.forEach(zona => {
+                                resultado.zonas.push({
+                                    "nombre":zona.nombre,
+                                    "xInferior":zona.xInferior,
+                                    "xSuperior":zona.xSuperior,
+                                    "ySuperior":zona.ySuperior,
+                                    "yInferior":zona.yInferior
+                                })
+                            });
+                       }
+                    resolver(resultado)
+                        
                         
     
                     }else{

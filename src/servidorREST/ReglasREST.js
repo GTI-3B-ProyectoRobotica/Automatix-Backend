@@ -116,14 +116,13 @@ module.exports.cargar = function(servidorExpress, laLogica){
                
                 // llamada a BD
                 var resultado = await laLogica.obtenerMapa(idMapa)
-
                 // no hay elementos
                 if(resultado.length == 0){
                     respuesta.status(500).send( JSON.stringify( {mensaje:"No existe un mapa con esa id"} ) )
                 }
 
                 // todo ok
-                respuesta.status(200).send(resultado[0])
+                respuesta.status(200).send(resultado)
                 return 
                
             }
