@@ -158,7 +158,19 @@ module.exports = class Logica {
      * @returns La informacion del mapa {id:N,imagen:Texto,resolucion:N}
      */
      obtenerMapa( idMapa) {
-        var textoSQL ='select  id,resolucion,CONVERT(imagen USING utf8) as imagen from '+BDConstantes.TABLA_MAPA.NOMBRE_TABLA +' where ' + BDConstantes.TABLA_MAPA.ID + '=?';
+        var textoSQL ='select ' +
+        BDConstantes.TABLA_MAPA.NOMBRE_TABLA+'.'+BDConstantes.TABLA_MAPA.ID+","+
+        BDConstantes.TABLA_MAPA.NOMBRE_TABLA+'.'+BDConstantes.TABLA_MAPA.RESOLUCION+', CONVERT('+
+        BDConstantes.TABLA_MAPA.NOMBRE_TABLA+'.'+BDConstantes.TABLA_MAPA.IMAGEN+' USING utf8) as imagen, ' +
+        BDConstantes.TABLA_ZONAS.NOMBRE_TABLA+"."+BDConstantes.TABLA_ZONAS.NOMBRE+","+
+        BDConstantes.TABLA_ZONAS.NOMBRE_TABLA+"."+BDConstantes.TABLA_ZONAS.X_INFERIOR+","+
+        BDConstantes.TABLA_ZONAS.NOMBRE_TABLA+"."+BDConstantes.TABLA_ZONAS.Y_SUPERIOR+","+
+        BDConstantes.TABLA_ZONAS.NOMBRE_TABLA+"."+BDConstantes.TABLA_ZONAS.X_SUPERIOR+","+
+        BDConstantes.TABLA_ZONAS.NOMBRE_TABLA+"."+BDConstantes.TABLA_ZONAS.Y_INFERIOR+
+        ' from '+
+        BDConstantes.TABLA_MAPA.NOMBRE_TABLA +' left join ' + BDConstantes.TABLA_ZONAS.NOMBRE_TABLA + ' on ' +
+        BDConstantes.TABLA_MAPA.NOMBRE_TABLA+'.id = '+ BDConstantes.TABLA_ZONAS.NOMBRE_TABLA+'.mapa where '+
+        BDConstantes.TABLA_MAPA.ID + '=?';
         let inserts = [idMapa]
         let sql = mysql.format(textoSQL, inserts);
         return new Promise( (resolver, rechazar) => {
@@ -166,12 +178,27 @@ module.exports = class Logica {
                 sql,
                 function( err,res,fields ) {
                     if(!err){
-                        // return 
-                        if(res.affectedRows == 0){
-                            rechazar({errno:1452})
-                        }else{
-                            resolver(res)
+                        // al ser un left join se duplica los datos comunes, pasamos las zonas a un array
+                        let resultado = {
+                            "id":res[0].id,
+                            "imagen":res[0].imagen,
+                            "resolucion":res[0].resolucion,
+                            "zonas":[]
+
                         }
+                       // si tiene zonas añadirlas al array
+                       if(res[0].xSuperior !=null){
+                            res.forEach(zona => {
+                                resultado.zonas.push({
+                                    "nombre":zona.nombre,
+                                    "xSuperior":zona.xSuperior,
+                                    "ySuperior":zona.ySuperior,
+                                    "xInferior":zona.xInferior,
+                                    "yInferior":zona.yInferior
+                                })
+                            });
+                       }
+                    resolver(resultado)
                         
     
                     }else{
@@ -200,14 +227,20 @@ module.exports = class Logica {
      * @param {double} yInferior La coordenada Y del punto inferior
      * @returns 
      */
-     guardarZona( nombre, mapa, xSuperior, ySuperior, xInferior, yInferior ) {
-        var textoSQL = 'INSERT INTO ' + BDConstantes.TABLA_ZONAS.NOMBRE_TABLA + '(' + 
+     guardarZonas(zonas) {
+         var textoSQL = ""
+        zonas.forEach(zona => {
+        textoSQL += 'INSERT INTO ' + BDConstantes.TABLA_ZONAS.NOMBRE_TABLA + '(' + 
         BDConstantes.TABLA_ZONAS.NOMBRE +', ' + BDConstantes.TABLA_ZONAS.MAPA + ', ' + BDConstantes.TABLA_ZONAS.X_SUPERIOR + ', ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + ', '  + BDConstantes.TABLA_ZONAS.X_INFERIOR + ', ' + BDConstantes.TABLA_ZONAS.Y_INFERIOR + 
-        ') VALUES(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE ' +
-        BDConstantes.TABLA_ZONAS.NOMBRE +'=?, ' + BDConstantes.TABLA_ZONAS.MAPA +'=?, ' + BDConstantes.TABLA_ZONAS.X_SUPERIOR + '=?, ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + '=?, ' + BDConstantes.TABLA_ZONAS.X_INFERIOR + '=?, '+ BDConstantes.TABLA_ZONAS.Y_INFERIOR + '=?;'
+        ') VALUES("' + zona.nombre+'",' + zona.mapa+','+zona.xSuperior+','+zona.ySuperior+','+zona.xInferior+','+zona.yInferior+
+        ') ON DUPLICATE KEY UPDATE ' +
+        BDConstantes.TABLA_ZONAS.NOMBRE +'="'+zona.nombre+'", ' + BDConstantes.TABLA_ZONAS.MAPA +'='+zona.mapa+', ' + 
+        BDConstantes.TABLA_ZONAS.X_SUPERIOR + '='+zona.xSuperior+', ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + '='+zona.ySuperior+', ' + 
+        BDConstantes.TABLA_ZONAS.X_INFERIOR + '='+zona.xInferior+', '+ 
+        BDConstantes.TABLA_ZONAS.Y_INFERIOR + '='+zona.yInferior+'; '
+        });
 
-        let inserts = [nombre, mapa, xSuperior, ySuperior, xInferior, yInferior]
-        let sql = mysql.format(textoSQL, inserts);
+        let sql = mysql.format(textoSQL);
         console.log(sql)
         return new Promise( (resolver, rechazar) => {
             this.laConexion.query( 

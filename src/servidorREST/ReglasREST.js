@@ -84,9 +84,8 @@ module.exports.cargar = function(servidorExpress, laLogica){
                 if(resultado.length == 0){
                     respuesta.status(500).send( JSON.stringify( {mensaje:"Ese mapa no tiene una zona de llegada asignada"} ) )
                 }
-
                 // todo ok
-                respuesta.status(200).send(resultado[0])
+                respuesta.status(200).send(resultado)
                 return 
                
             }
@@ -123,7 +122,7 @@ module.exports.cargar = function(servidorExpress, laLogica){
                 }
 
                 // todo ok
-                respuesta.status(200).send(resultado[0])
+                respuesta.status(200).send(resultado)
                 return 
                
             }
@@ -142,28 +141,30 @@ module.exports.cargar = function(servidorExpress, laLogica){
         console.log( " * POST /zonas" )
        
         try{
-           console.log(peticion.body);
-            var json = JSON.parse(peticion.body);
-            let nombre = json['nombre']
-            let mapa = json['mapa']
-            let xSup = json['xSuperior']
-            let ySup = json['ySuperior']
-            let xInf = json['xInferior']
-            let yInf = json['yInferior']
-            if(nombre==null || mapa==null || xSup==null || ySup==null || xInf==null ||yInf==null){
-                // no estan todo los parametros obligatorios
-                respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
-                return
-            }else{
-               
+            var zonas = JSON.parse(peticion.body);
+            for (let i = 0; i < zonas.length; i++) {
+                let zona = zonas[i]
+                let nombre = zona.nombre
+                let mapa = zona.mapa
+                let xSup = zona.xSuperior
+                let ySup = zona.ySuperior
+                let xInf = zona.xInferior
+                let yInf = zona.yInferior
+                console.log(zona);
+                if(nombre==null || mapa==null || xSup==null || ySup==null || xInf==null ||yInf==null){
+                    // no estan todo los parametros obligatorios
+                    respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
+                    return
+                }
+            }             
                 // todo ok 
-                await laLogica.guardarZonas(nombre,mapa,xSup,ySup,xInf,yInf)
+                await laLogica.guardarZonas(zonas)
+                console.log("exito")
                 respuesta.status(200).send()
                 return 
-               
-            }
 
         }catch(error){
+            console.log(error)
             if(error.errno == 1452){ // 1452 es el codigo de error en una clave ajena
                 respuesta.status(500).send( JSON.stringify( {mensaje:"No existe una zona con ese id"} ) )
             }else{
