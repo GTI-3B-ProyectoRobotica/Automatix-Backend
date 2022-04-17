@@ -135,6 +135,43 @@ module.exports.cargar = function(servidorExpress, laLogica){
         
     }) // 
 
+    // .......................................................
+    // POST /zonas
+    // .......................................................
+    servidorExpress.post('/zonas', async function( peticion, respuesta ){
+        console.log( " * POST /zonas" )
+       
+        try{
+           console.log(peticion.body);
+            var json = JSON.parse(peticion.body);
+            let nombre = json['nombre']
+            let mapa = json['mapa']
+            let xSup = json['xSuperior']
+            let ySup = json['ySuperior']
+            let xInf = json['xInferior']
+            let yInf = json['yInferior']
+            if(nombre==null || mapa==null || xSup==null || ySup==null || xInf==null ||yInf==null){
+                // no estan todo los parametros obligatorios
+                respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
+                return
+            }else{
+               
+                // todo ok 
+                await laLogica.guardarZonas(nombre,mapa,xSup,ySup,xInf,yInf)
+                respuesta.status(200).send()
+                return 
+               
+            }
 
+        }catch(error){
+            if(error.errno == 1452){ // 1452 es el codigo de error en una clave ajena
+                respuesta.status(500).send( JSON.stringify( {mensaje:"No existe una zona con ese id"} ) )
+            }else{
+               
+                respuesta.status(500).send( JSON.stringify( {mensaje:"Error desconocido"} ) )
+            }
+        }
+        
+    }) // 
 
 }

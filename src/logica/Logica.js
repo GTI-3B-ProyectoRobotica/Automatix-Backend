@@ -185,6 +185,54 @@ module.exports = class Logica {
 
     } // ()obtenerMapa
 
+    // .................................................................
+    // 
+    // nombre:Texto,  mapa:N, xSuperior:R, ySuperior: R, xInferior:R, yInferior: R-->
+    // guardarZonas() --> 
+    // .................................................................
+    /**
+     * 
+     * @param {string} nombre El nombre de la zona
+     * @param {int} mapa La id del mapa al que pertenece 
+     * @param {double} xSuperior La coordenada X del punto superior
+     * @param {double} ySuperior La coordenada Y del punto superior
+     * @param {double} xInferior La coordenada X del punto inferior
+     * @param {double} yInferior La coordenada Y del punto inferior
+     * @returns 
+     */
+     guardarZona( nombre, mapa, xSuperior, ySuperior, xInferior, yInferior ) {
+        var textoSQL = 'INSERT INTO ' + BDConstantes.TABLA_ZONAS.NOMBRE_TABLA + '(' + 
+        BDConstantes.TABLA_ZONAS.NOMBRE +', ' + BDConstantes.TABLA_ZONAS.MAPA + ', ' + BDConstantes.TABLA_ZONAS.X_SUPERIOR + ', ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + ', '  + BDConstantes.TABLA_ZONAS.X_INFERIOR + ', ' + BDConstantes.TABLA_ZONAS.Y_INFERIOR + 
+        ') VALUES(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE ' +
+        BDConstantes.TABLA_ZONAS.NOMBRE +'=?, ' + BDConstantes.TABLA_ZONAS.MAPA +'=?, ' + BDConstantes.TABLA_ZONAS.X_SUPERIOR + '=?, ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + '=?, ' + BDConstantes.TABLA_ZONAS.X_INFERIOR + '=?, '+ BDConstantes.TABLA_ZONAS.Y_INFERIOR + '=?;'
+
+        let inserts = [nombre, mapa, xSuperior, ySuperior, xInferior, yInferior]
+        let sql = mysql.format(textoSQL, inserts);
+        console.log(sql)
+        return new Promise( (resolver, rechazar) => {
+            this.laConexion.query( 
+                sql,
+                function( err,res,fields ) {
+                    if(!err){
+                        // return 
+                        if(res.affectedRows == 0){
+                            rechazar({errno:1452})
+                        }else{
+                            resolver(res)
+                        }
+                        
+    
+                    }else{
+                        
+                        rechazar(err)
+                    }
+                    
+                }
+               )//query
+            })// promise
+
+    } // ()guardarZona
+
 } // class
 // .....................................................................
 // .....................................................................
