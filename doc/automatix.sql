@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-04-2022 a las 19:00:07
+-- Tiempo de generación: 23-04-2022 a las 17:37:01
 -- Versión del servidor: 10.4.21-MariaDB
 -- Versión de PHP: 8.0.12
 
@@ -48,11 +48,20 @@ INSERT INTO `mapa` (`id`, `imagen`, `resolucion`) VALUES
 
 CREATE TABLE `producto` (
   `id` int(11) NOT NULL,
-  `nombre` text NOT NULL,
-  `cantidad` int(11) NOT NULL,
-  `precio ud` float NOT NULL,
+  `nombre` text NOT NULL DEFAULT 'prueba',
+  `cantidad` int(11) NOT NULL DEFAULT 1,
+  `precio ud` float NOT NULL DEFAULT 5.5,
   `zona` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `producto`
+--
+
+INSERT INTO `producto` (`id`, `nombre`, `cantidad`, `precio ud`, `zona`) VALUES
+(1, 'zapatos', 37, 30, 'transportista'),
+(3, 'prueba', 1, 5.5, 'transportista'),
+(800, 'prueba', 3, 5.5, 'transportista');
 
 -- --------------------------------------------------------
 
@@ -92,6 +101,13 @@ CREATE TABLE `zona` (
   `xInferior` decimal(10,0) NOT NULL,
   `yInferior` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `zona`
+--
+
+INSERT INTO `zona` (`nombre`, `mapa`, `xSuperior`, `ySuperior`, `xInferior`, `yInferior`) VALUES
+('transportista', 1, '1', '1', '1', '1');
 
 --
 -- Índices para tablas volcadas

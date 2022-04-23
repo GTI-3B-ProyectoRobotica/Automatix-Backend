@@ -41,8 +41,8 @@ class TABLA_ROBOT{
 }
 
 
-// Tabla Mapa
-class TABLA_USUERIO{
+// Tabla Usuario
+class TABLA_USUARIO{
 
    
     static NOMBRE_TABLA = "usuario";
@@ -53,9 +53,23 @@ class TABLA_USUERIO{
 
 }
 
+// Tabla producto
+class TABLA_PRODUCTO{
+
+   
+    static NOMBRE_TABLA = "producto";
+    static ID = "id";
+    static NOMBRE = "nombre";
+    static CANTIDAD = "cantidad";
+    static PRECIO = "precio ud";
+    static ZONA = "zona";
+
+}
+
 module.exports = {
     TABLA_MAPA : TABLA_MAPA,
     TABLA_ZONAS:TABLA_ZONAS,
     TABLA_ROBOT: TABLA_ROBOT,
-    TABLA_USUERIO: TABLA_USUERIO
+    TABLA_USUARIO: TABLA_USUARIO,
+    TABLA_PRODUCTO: TABLA_PRODUCTO
 }

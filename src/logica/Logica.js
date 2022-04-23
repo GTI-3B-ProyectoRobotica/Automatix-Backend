@@ -266,6 +266,76 @@ module.exports = class Logica {
 
     } // ()guardarZona
 
+    // .................................................................
+    // 
+    // idProducto: N -->
+    // actualizarStockById() --> 
+    // .................................................................
+    /**
+     * actualiza en la tabla producto el stock sumando uno o en su defecto, se crea con el id del producto y la id de la zona en la que está el robot
+     * 
+     * @param idProducto la id del producto que queremos actualizar
+     * @param idZona la id de la zona a la que pertenece
+     * 
+     */
+     actualizarStockById(idProducto,idZona) {
+        var textoSQL = 'INSERT INTO ' + BDConstantes.TABLA_PRODUCTO.NOMBRE_TABLA + '(' + BDConstantes.TABLA_PRODUCTO.ID + ',' + BDConstantes.TABLA_PRODUCTO.ZONA + ') VALUES (?,?) ON DUPLICATE KEY UPDATE ' + BDConstantes.TABLA_PRODUCTO.CANTIDAD  + '=' + BDConstantes.TABLA_PRODUCTO.CANTIDAD + '+1';
+
+        let inserts = [idProducto,idZona]
+        
+        
+        let sql = mysql.format(textoSQL, inserts);
+
+        return new Promise( (resolver, rechazar) => {
+            this.laConexion.query(sql, function( err,res,fields ) {
+                if(!err){
+                    // return 
+                        resolver(res)
+                }else{
+                    if(err.errno == 1425)
+                        rechazar("No existe la zona")
+                    
+                    rechazar("Error desconocido")    
+                } 
+            }
+            )//query
+        })// promise
+
+    } // ()actualizarStockById
+
+
+    // .................................................................
+    // 
+    // obtenerTodosProductos() --> Array de productos
+    // .................................................................
+    /**
+     * devuelve todos los productos de la base de datos
+     * 
+     * @param idMapa el mapa del que queremos obtener los productos
+     * @return una lista con todos los productos
+     * 
+     */
+     obtenerTodosProductos(idMapa) {
+        var textoSQL ='SELECT * FROM ' + BDConstantes.TABLA_PRODUCTO.NOMBRE_TABLA + ' WHERE ' + BDConstantes.TABLA_PRODUCTO.ZONA + '=(SELECT '+
+        BDConstantes.TABLA_ZONAS.NOMBRE + ' FROM ' + BDConstantes.TABLA_ZONAS.NOMBRE_TABLA + ' WHERE ' + BDConstantes.TABLA_ZONAS.MAPA + '=?)';
+        
+        let inserts = [idMapa]
+        let sql = mysql.format(textoSQL, inserts);
+        return new Promise( (resolver, rechazar) => {
+            this.laConexion.query(sql, function( err,res,fields ) {
+
+                    if(!err){
+
+                        resolver(res)
+
+                    }else{
+                        rechazar("Error desconocido")
+                    }
+                    
+                })
+            })
+    } // ()obtenerTodosProductos
+
 } // class
 // .....................................................................
 // .....................................................................
