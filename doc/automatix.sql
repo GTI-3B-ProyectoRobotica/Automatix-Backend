@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-04-2022 a las 17:37:01
+-- Tiempo de generación: 23-04-2022 a las 17:44:35
 -- Versión del servidor: 10.4.21-MariaDB
 -- Versión de PHP: 8.0.12
 
@@ -50,7 +50,7 @@ CREATE TABLE `producto` (
   `id` int(11) NOT NULL,
   `nombre` text NOT NULL DEFAULT 'prueba',
   `cantidad` int(11) NOT NULL DEFAULT 1,
-  `precio ud` float NOT NULL DEFAULT 5.5,
+  `precio` float NOT NULL DEFAULT 5.5,
   `zona` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -58,7 +58,7 @@ CREATE TABLE `producto` (
 -- Volcado de datos para la tabla `producto`
 --
 
-INSERT INTO `producto` (`id`, `nombre`, `cantidad`, `precio ud`, `zona`) VALUES
+INSERT INTO `producto` (`id`, `nombre`, `cantidad`, `precio`, `zona`) VALUES
 (1, 'zapatos', 37, 30, 'transportista'),
 (3, 'prueba', 1, 5.5, 'transportista'),
 (800, 'prueba', 3, 5.5, 'transportista');

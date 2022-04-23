@@ -61,7 +61,7 @@ class TABLA_PRODUCTO{
     static ID = "id";
     static NOMBRE = "nombre";
     static CANTIDAD = "cantidad";
-    static PRECIO = "precio ud";
+    static PRECIO = "precio";
     static ZONA = "zona";
 
 }

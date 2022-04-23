@@ -175,4 +175,79 @@ module.exports.cargar = function(servidorExpress, laLogica){
         
     }) // 
 
+
+      // .......................................................
+    // PUT /producto?idproducto?idzona
+    // .......................................................
+    servidorExpress.put('/producto', async function(peticion, respuesta) {
+
+        console.log("PUT */producto?idproducto?idzona");
+        // creo el registro
+
+        try {
+            var json = JSON.parse(peticion.body);
+
+            let producto = json['idProducto']
+            let zona = json['idZona']
+            if(producto==null){
+                // no estan todo los parametros obligatorios
+                respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
+                return
+            }else{
+                // todo ok 
+                await laLogica.actualizarStockById(producto,zona);
+                // todo ok
+                respuesta.status(200).send( JSON.stringify( {mensaje:"El stock se ha actualizado correctamente"} ) )
+                return 
+               
+            }
+
+        } catch (error) {
+            if(error.errno == 1452){ // 1452 es el codigo de error en una clave ajena
+                respuesta.status(500).send( JSON.stringify( {mensaje:"No existe un producto o zona con ese id"} ) )
+            }else{
+               
+                respuesta.status(500).send( JSON.stringify( {mensaje:"Error desconocido"} ) )
+            }
+            
+        }
+    })
+
+     // .......................................................
+    // GET /productos?idmapa
+    // .......................................................
+    servidorExpress.get('/productos', async function(peticion, respuesta) {
+
+        console.log("GET */productos?idmapa");
+
+        try{
+
+            let idMapa = peticion.query.idmapa
+            if(idMapa==null){
+                // no estan todo los parametros obligatorios
+                respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
+                return
+            }else{
+               
+                // llamada a BD
+                var resultado = await laLogica.obtenerTodosProductos(idMapa)
+
+                // no hay elementos
+                if(resultado.length == 0){
+                    respuesta.status(500).send( JSON.stringify( {mensaje:"No existe un mapa con esa id"} ) )
+                }
+
+                // todo ok
+                respuesta.status(200).send(resultado)
+                return 
+               
+            }
+
+        }catch(error){
+            respuesta.status(500).send( JSON.stringify( {mensaje:"Error desconocido"} ) )
+            
+        }
+
+    })
+
 }
