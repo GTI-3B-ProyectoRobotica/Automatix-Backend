@@ -165,12 +165,7 @@ module.exports.cargar = function(servidorExpress, laLogica){
 
         }catch(error){
             console.log(error)
-            if(error.errno == 1452){ // 1452 es el codigo de error en una clave ajena
-                respuesta.status(500).send( JSON.stringify( {mensaje:"No existe una zona con ese id"} ) )
-            }else{
-               
-                respuesta.status(500).send( JSON.stringify( {mensaje:"Error desconocido"} ) )
-            }
+            respuesta.status(500).send( JSON.stringify( {mensaje:"Error desconocido"} ) )
         }
         
     }) // 

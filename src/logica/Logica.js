@@ -229,18 +229,20 @@ module.exports = class Logica {
      */
      guardarZonas(zonas) {
          var textoSQL = ""
+         let inserts = []
         zonas.forEach(zona => {
         textoSQL += 'INSERT INTO ' + BDConstantes.TABLA_ZONAS.NOMBRE_TABLA + '(' + 
         BDConstantes.TABLA_ZONAS.NOMBRE +', ' + BDConstantes.TABLA_ZONAS.MAPA + ', ' + BDConstantes.TABLA_ZONAS.X_SUPERIOR + ', ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + ', '  + BDConstantes.TABLA_ZONAS.X_INFERIOR + ', ' + BDConstantes.TABLA_ZONAS.Y_INFERIOR + 
-        ') VALUES("' + zona.nombre+'",' + zona.mapa+','+zona.xSuperior+','+zona.ySuperior+','+zona.xInferior+','+zona.yInferior+
-        ') ON DUPLICATE KEY UPDATE ' +
-        BDConstantes.TABLA_ZONAS.NOMBRE +'="'+zona.nombre+'", ' + BDConstantes.TABLA_ZONAS.MAPA +'='+zona.mapa+', ' + 
+        ') VALUES(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE ' +
+        BDConstantes.TABLA_ZONAS.NOMBRE +"='"+zona.nombre+"', '" + BDConstantes.TABLA_ZONAS.MAPA +'='+zona.mapa+', ' + 
         BDConstantes.TABLA_ZONAS.X_SUPERIOR + '='+zona.xSuperior+', ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + '='+zona.ySuperior+', ' + 
         BDConstantes.TABLA_ZONAS.X_INFERIOR + '='+zona.xInferior+', '+ 
-        BDConstantes.TABLA_ZONAS.Y_INFERIOR + '='+zona.yInferior+'; '
-        });
+        BDConstantes.TABLA_ZONAS.Y_INFERIOR + '='+zona.yInferior+';'
 
-        let sql = mysql.format(textoSQL);
+        inserts.push(zona.nombre, zona.mapa, zona.xSuperior, zona.ySuperior, zona.xInferior, zona.yInferior)
+        });
+        let sql = mysql.format(textoSQL,inserts);
+
         console.log(sql)
         return new Promise( (resolver, rechazar) => {
             this.laConexion.query( 
