@@ -202,7 +202,6 @@ module.exports = class Logica {
                         
     
                     }else{
-                        
                         rechazar(err)
                     }
                     
@@ -234,7 +233,7 @@ module.exports = class Logica {
         textoSQL += 'INSERT INTO ' + BDConstantes.TABLA_ZONAS.NOMBRE_TABLA + '(' + 
         BDConstantes.TABLA_ZONAS.NOMBRE +', ' + BDConstantes.TABLA_ZONAS.MAPA + ', ' + BDConstantes.TABLA_ZONAS.X_SUPERIOR + ', ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + ', '  + BDConstantes.TABLA_ZONAS.X_INFERIOR + ', ' + BDConstantes.TABLA_ZONAS.Y_INFERIOR + 
         ') VALUES(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE ' +
-        BDConstantes.TABLA_ZONAS.NOMBRE +"='"+zona.nombre+"', '" + BDConstantes.TABLA_ZONAS.MAPA +'='+zona.mapa+', ' + 
+        BDConstantes.TABLA_ZONAS.NOMBRE +"='"+zona.nombre+"', " + BDConstantes.TABLA_ZONAS.MAPA +'='+zona.mapa+', ' + 
         BDConstantes.TABLA_ZONAS.X_SUPERIOR + '='+zona.xSuperior+', ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + '='+zona.ySuperior+', ' + 
         BDConstantes.TABLA_ZONAS.X_INFERIOR + '='+zona.xInferior+', '+ 
         BDConstantes.TABLA_ZONAS.Y_INFERIOR + '='+zona.yInferior+';'
