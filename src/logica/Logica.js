@@ -276,15 +276,20 @@ module.exports = class Logica {
      * 
      * @param idProducto la id del producto que queremos actualizar
      * @param idZona la id de la zona a la que pertenece
+     * @param nombre el nombre del producto
+     * @param cantidad la cantidad a añadir
+     * @param precio precio del producto
      * 
      */
-     actualizarStockById(idProducto,idZona) {
-        var textoSQL = 'INSERT INTO ' + BDConstantes.TABLA_PRODUCTO.NOMBRE_TABLA + '(' + BDConstantes.TABLA_PRODUCTO.ID + ',' + BDConstantes.TABLA_PRODUCTO.ZONA + ') VALUES (?,?) ON DUPLICATE KEY UPDATE ' + BDConstantes.TABLA_PRODUCTO.CANTIDAD  + '=' + BDConstantes.TABLA_PRODUCTO.CANTIDAD + '+1';
+     actualizarStockById(idProducto, nombre,idZona, cantidad, precio) {
+        var textoSQL = 'INSERT INTO ' + BDConstantes.TABLA_PRODUCTO.NOMBRE_TABLA + '(' + BDConstantes.TABLA_PRODUCTO.ID + ',' + BDConstantes.TABLA_PRODUCTO.NOMBRE + ',' + 
+        BDConstantes.TABLA_PRODUCTO.ZONA + ',' + BDConstantes.TABLA_PRODUCTO.CANTIDAD + ',' + BDConstantes.TABLA_PRODUCTO.PRECIO + ') VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE ' + BDConstantes.TABLA_PRODUCTO.CANTIDAD  + '=' + BDConstantes.TABLA_PRODUCTO.CANTIDAD + '+' + cantidad;
 
-        let inserts = [idProducto,idZona]
+        let inserts = [idProducto,nombre,idZona,cantidad,precio]
         
         
         let sql = mysql.format(textoSQL, inserts);
+        console.log(sql)
 
         return new Promise( (resolver, rechazar) => {
             this.laConexion.query(sql, function( err,res,fields ) {
@@ -311,7 +316,7 @@ module.exports = class Logica {
     /**
      * devuelve todos los productos de la base de datos
      * 
-     * @param idMapa el mapa del que queremos obtener los productos
+     * @param idMapa el usuario del que queremos obtener los productos
      * @return una lista con todos los productos
      * 
      */

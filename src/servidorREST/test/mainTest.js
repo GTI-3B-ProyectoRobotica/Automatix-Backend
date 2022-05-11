@@ -143,12 +143,15 @@ describe( "==================================================\n\t\t\t Test\n  ==
         // lo que le paso a la funcion
         let bodyPost ={
                     "idProducto":1,
+                    "nombre":"zapatos",
                     "idZona":"transportista",
+                    "cantidad":76,
+                    "precio":2
         }
         
         let publicarStub = sinon.stub(laLogica, 'actualizarStockById').resolves({});
 
-        request(app).put('/producto?idproducto?idzona')
+        request(app).put('/producto')
             .send(bodyPost)
             .expect(200)
             .end((err, response)=>{
@@ -157,7 +160,10 @@ describe( "==================================================\n\t\t\t Test\n  ==
 
                 expect(publicarStub).to.have.been.calledOnce; // se llamo a actualizarStockById
                 expect(parametrosFuncion[0]).to.eql(1)
-                expect(parametrosFuncion[1]).to.eql("transportista")
+                expect(parametrosFuncion[1]).to.eql("zapatos")
+                expect(parametrosFuncion[2]).to.eql("transportista")
+                expect(parametrosFuncion[3]).to.eql(76)
+                expect(parametrosFuncion[4]).to.eql(2)
                 expect(response.statusCode).equal(200)
                 expect(response.text).equal('{"mensaje":"El stock se ha actualizado correctamente"}'); // mensaje de ok
                 done()
@@ -169,12 +175,15 @@ describe( "==================================================\n\t\t\t Test\n  ==
         // lo que le paso a la funcion
         let bodyPost ={
                     "idProducto":756,
+                    "nombre":"prueba",
                     "idZona":"transportista",
+                    "cantidad":76,
+                    "precio":2
         }
         
         let publicarStub = sinon.stub(laLogica, 'actualizarStockById').resolves({});
 
-        request(app).put('/producto?idproducto?idzona')
+        request(app).put('/producto?idproducto?nombre?idzona?cantidad?precio')
             .send(bodyPost)
             .expect(200)
             .end((err, response)=>{
@@ -183,23 +192,29 @@ describe( "==================================================\n\t\t\t Test\n  ==
 
                 expect(publicarStub).to.have.been.calledOnce; // se llamo a actualizarStockById
                 expect(parametrosFuncion[0]).to.eql(756)
-                expect(parametrosFuncion[1]).to.eql("transportista")
+                expect(parametrosFuncion[1]).to.eql("prueba")
+                expect(parametrosFuncion[2]).to.eql("transportista")
+                expect(parametrosFuncion[3]).to.eql(76)
+                expect(parametrosFuncion[4]).to.eql(2)
                 expect(response.statusCode).equal(200)
                 expect(response.text).equal('{"mensaje":"El stock se ha actualizado correctamente"}'); // mensaje de ok
                 done()
             })
     })
     
-    it('PUT/producto?idproducto?idzona no se le manda ids devuelve 400',function (done){
+    it('PUT/producto?idproducto?nombre?idzona?cantidad?precio no se le manda ids devuelve 400',function (done){
         // lo que le paso a la funcion
         let bodyPost ={
             "idProducto":null,
+            "nombre":"prueba",
             "idZona":null,
+            "cantidad":76,
+            "precio":2
         }
 
         let publicarStub = sinon.stub(laLogica, 'actualizarStockById').rejects({err:400});
 
-        request(app).put('/producto?idproducto?idzona')
+        request(app).put('/producto?idproducto?nombre?idzona?cantidad?precio')
             .send(bodyPost)
             .expect(400)
             .end((err, response)=>{
@@ -212,16 +227,19 @@ describe( "==================================================\n\t\t\t Test\n  ==
         
     })
 
-    it('PUT/producto?idproducto?idzona la zona y el objeto no existe devuelve 1452',function (done){
+    it('PUT/producto?idproducto?nombre?idzona?cantidad?precio la zona y el objeto no existe devuelve 1452',function (done){
         // lo que le paso a la funcion
         let bodyPost ={
             "idProducto":600,
-            "idZona":"zapatos" 
+            "nombre":"prueba",
+            "idZona":"zapatos",
+            "cantidad":76,
+            "precio":2
         }
 
         let publicarStub = sinon.stub(laLogica, 'actualizarStockById').rejects({errno:1452});
 
-        request(app).put('/producto')
+        request(app).put('/producto?idproducto?nombre?idzona?cantidad?precio')
             .send(bodyPost)
             .expect(500)
             .end((err, response)=>{
@@ -230,7 +248,10 @@ describe( "==================================================\n\t\t\t Test\n  ==
 
                 expect(publicarStub).to.have.been.calledOnce; // se llamo a actualizarStock
                 expect(parametrosFuncion[0]).to.eql(600)
-                expect(parametrosFuncion[1]).to.eql("zapatos")
+                expect(parametrosFuncion[1]).to.eql("prueba")
+                expect(parametrosFuncion[2]).to.eql("zapatos")
+                expect(parametrosFuncion[3]).to.eql(76)
+                expect(parametrosFuncion[4]).to.eql(2)
                 expect(response.statusCode).equal(500)
                 expect(response.text).equal('{"mensaje":"No existe un producto o zona con ese id"}'); // mensaje de ok
                 done();

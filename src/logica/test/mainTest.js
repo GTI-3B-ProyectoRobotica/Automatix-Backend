@@ -107,9 +107,12 @@ describe( "Test ", function() {
 
         var id = "1"
         var zona = "transportista"
+        var nombre = "zapatos"
+        var cantidad = "2"
+        var precio = "30"
         var error = null
         try{
-            await laLogica.actualizarStockById(id,zona)
+            await laLogica.actualizarStockById(id, nombre, zona, cantidad, precio)   
         } catch(err){
             error=err
         }
@@ -117,7 +120,7 @@ describe( "Test ", function() {
         assert.equal(stub.calledOnce,true,"No se llamo al metodo actualizarStock?")
 
         // comprobamos que se crea bien la sentencia sql
-        assert.equal(stub.calledWith("INSERT INTO producto(id,zona) VALUES ('1','transportista') ON DUPLICATE KEY UPDATE cantidad=cantidad+1"),true,"No se montó bien la query?")
+        assert.equal(stub.calledWith("INSERT INTO producto(id,nombre,zona,cantidad,precio) VALUES ('1','zapatos','transportista','2','30') ON DUPLICATE KEY UPDATE cantidad=cantidad+2"),true,"No se montó bien la query?")
         
     })// it
 
@@ -134,16 +137,19 @@ describe( "Test ", function() {
 
         var id = "800"
         var zona = "transportista"
+        var nombre = "prueba"
+        var precio = "2"
+        var cantidad = "76"
         var error = null
         try {
-            await laLogica.actualizarStockById(id,zona)    
+            await laLogica.actualizarStockById(id, nombre, zona, cantidad, precio)    
         } catch(err){
             error = err
         }
         assert.equal(error,null,"¿No está bien la id o la zona?")
         assert.equal(stub.calledOnce,true,"No se llamo al metodo actualizarStock?")
         // comprobamos que se crea bien la sentencia sql
-        assert.equal(stub.calledWith("INSERT INTO producto(id,zona) VALUES ('800','transportista') ON DUPLICATE KEY UPDATE cantidad=cantidad+1"),true,"No se montó bien la query?")     
+        assert.equal(stub.calledWith("INSERT INTO producto(id,nombre,zona,cantidad,precio) VALUES ('800','prueba','transportista','76','2') ON DUPLICATE KEY UPDATE cantidad=cantidad+76"),true,"No se montó bien la query?")     
     })// it
 
     it("Añadir producto sin zona",async function(){
@@ -159,16 +165,19 @@ describe( "Test ", function() {
 
         var id = "800"
         var zona = null
+        var nombre = "prueba"
+        var precio = "2"
+        var cantidad = "76"
         var error = null
         try {
-            await laLogica.actualizarStockById(id,zona)
+            await laLogica.actualizarStockById(id, nombre, zona, cantidad, precio)   
         } catch(err){
             error=err
         }
         assert.equal(error,null,"¿No está bien la id o la zona?")
         assert.equal(stub.calledOnce,true,"No se llamo al metodo actualizarStock?")
         // comprobamos que se crea bien la sentencia sql
-        assert.equal(stub.calledWith("INSERT INTO producto(id,zona) VALUES ('800',NULL) ON DUPLICATE KEY UPDATE cantidad=cantidad+1"),true,"No se montó bien la query?")
+        assert.equal(stub.calledWith("INSERT INTO producto(id,nombre,zona,cantidad,precio) VALUES ('800','prueba',NULL,'76','2') ON DUPLICATE KEY UPDATE cantidad=cantidad+76"),true,"No se montó bien la query?")
 
         
     })// it
@@ -186,16 +195,19 @@ describe( "Test ", function() {
 
         var id = "600"
         var zona = "zapatos"
+        var nombre = "prueba"
+        var precio = "2"
+        var cantidad = "76"
         var error = null
         try {
-            await laLogica.actualizarStockById(id,zona)    
+            await laLogica.actualizarStockById(id, nombre, zona, cantidad, precio)       
         } catch(err){
             error = err
         }
         assert.equal(error,"No existe la zona", "La zona no existe!!!")
         assert.equal(stub.calledOnce,true,"No se llamo al metodo actualizarStock?")
         // comprobamos que se crea bien la sentencia sql
-        assert.equal(stub.calledWith("INSERT INTO producto(id,zona) VALUES ('600','zapatos') ON DUPLICATE KEY UPDATE cantidad=cantidad+1"),true,"No se montó bien la query?")  
+        assert.equal(stub.calledWith("INSERT INTO producto(id,nombre,zona,cantidad,precio) VALUES ('600','prueba','zapatos','76','2') ON DUPLICATE KEY UPDATE cantidad=cantidad+76"),true,"No se montó bien la query?")  
     })// it
 
 

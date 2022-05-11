@@ -181,21 +181,24 @@ module.exports.cargar = function(servidorExpress, laLogica){
     // .......................................................
     servidorExpress.put('/producto', async function(peticion, respuesta) {
 
-        console.log("PUT */producto?idproducto?idzona");
+        console.log("PUT */producto?idproducto?nombre?idzona?cantidad?precio");
         // creo el registro
 
         try {
             var json = JSON.parse(peticion.body);
 
             let producto = json['idProducto']
+            let nombre = json['nombre']
             let zona = json['idZona']
+            let cantidad = json['cantidad']
+            let precio = json['precio']
             if(producto==null){
                 // no estan todo los parametros obligatorios
                 respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
                 return
             }else{
                 // todo ok 
-                await laLogica.actualizarStockById(producto,zona);
+                await laLogica.actualizarStockById(producto,nombre,zona,cantidad,precio);
                 // todo ok
                 respuesta.status(200).send( JSON.stringify( {mensaje:"El stock se ha actualizado correctamente"} ) )
                 return 
