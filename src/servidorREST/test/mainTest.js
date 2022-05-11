@@ -138,7 +138,67 @@ describe( "==================================================\n\t\t\t Test\n  ==
             })
     })
 
- 
+    it('POST/zonas publicar zonas correcto devuelve 200', function (done){
+        
+        // lo que le paso a la funcion
+        let bodyPost =[{
+            nombre: "transportista",
+            mapa: 1,
+            xSuperior: 0,
+            ySuperior: 0,
+            xInferior: 2,
+            yInferior: 2,
+
+        }]
+        // lo que espero con que se llame al metodo publicar 
+        let nombreEsperable = "transportista"
+        let mapaEsperable = 1
+        let xSEsperable = 0
+        let ySEsperable = 0
+        let xIEsperable = 2
+        let yIEsperable = 2
+
+        let publicarStub = sinon.stub(laLogica, 'guardarZonas').resolves({});
+
+        request(app).post('/zonas')
+            .send(bodyPost)
+            .expect(200)
+            .end((err, response)=>{
+
+                let parametrosFuncion = publicarStub.args[0][0][0] // se llama a la funcion los parametros eseprables
+                expect(publicarStub).to.have.been.calledOnce; // se llamo a guardarZonas
+                expect(parametrosFuncion.nombre).to.eql(nombreEsperable)
+                expect(parametrosFuncion.mapa).to.eql(mapaEsperable)
+                expect(parametrosFuncion.xSuperior).to.eql(xSEsperable)
+                expect(parametrosFuncion.ySuperior).to.eql(ySEsperable)
+                expect(parametrosFuncion.xInferior).to.eql(xIEsperable)
+                expect(parametrosFuncion.yInferior).to.eql(yIEsperable)
+                expect(response.statusCode).equal(200)
+                done()
+            })
+    })
+
+    it('POST/zonas publicar zonas incorrecto devuelve 400', function (done){
+        
+        // lo que le paso a la funcion
+        let bodyPost =[{
+            nombre: "transportista",
+            yInferior: 2
+        }]
+
+        let publicarStub = sinon.stub(laLogica, 'guardarZonas').resolves({});
+
+        request(app).post('/zonas')
+            .send(bodyPost)
+            .expect(400)
+            .end((err, response)=>{
+
+                expect(response.statusCode).equal(400)
+                expect(publicarStub).to.not.have.been.calledOnce; // no se llamo a guardarMapa
+                expect(response.text).equal('{"mensaje":"Falta algun parametro"}'); // mensaje de ok
+                done();
+            })
+    })
 
    
 

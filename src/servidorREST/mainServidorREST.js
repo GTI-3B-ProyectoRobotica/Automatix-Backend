@@ -22,7 +22,8 @@ function cargarLogica(){
             host     : BDCredenciales.MYSQL.BD_HOST,
             user     : BDCredenciales.MYSQL.BD_USUARIO,
             password : BDCredenciales.MYSQL.BD_CONTRASENYA,
-            database :  BDCredenciales.MYSQL.BD_NOMBRE
+            database :  BDCredenciales.MYSQL.BD_NOMBRE,
+            multipleStatements: true
       })
     );
 

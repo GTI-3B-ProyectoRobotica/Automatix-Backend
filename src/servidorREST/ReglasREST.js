@@ -84,9 +84,8 @@ module.exports.cargar = function(servidorExpress, laLogica){
                 if(resultado.length == 0){
                     respuesta.status(500).send( JSON.stringify( {mensaje:"Ese mapa no tiene una zona de llegada asignada"} ) )
                 }
-
                 // todo ok
-                respuesta.status(200).send(resultado[0])
+                respuesta.status(200).send(resultado)
                 return 
                
             }
@@ -123,7 +122,7 @@ module.exports.cargar = function(servidorExpress, laLogica){
                 }
 
                 // todo ok
-                respuesta.status(200).send(resultado[0])
+                respuesta.status(200).send(resultado)
                 return 
                
             }
@@ -135,6 +134,40 @@ module.exports.cargar = function(servidorExpress, laLogica){
         
     }) // 
 
+    // .......................................................
+    // POST /zonas
+    // .......................................................
+    servidorExpress.post('/zonas', async function( peticion, respuesta ){
+        console.log( " * POST /zonas" )
+       
+        try{
+            var zonas = JSON.parse(peticion.body);
+            for (let i = 0; i < zonas.length; i++) {
+                let zona = zonas[i]
+                let nombre = zona.nombre
+                let mapa = zona.mapa
+                let xSup = zona.xSuperior
+                let ySup = zona.ySuperior
+                let xInf = zona.xInferior
+                let yInf = zona.yInferior
+                console.log(zona);
+                if(nombre==null || mapa==null || xSup==null || ySup==null || xInf==null ||yInf==null){
+                    // no estan todo los parametros obligatorios
+                    respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
+                    return
+                }
+            }             
+                // todo ok 
+                await laLogica.guardarZonas(zonas)
+                console.log("exito")
+                respuesta.status(200).send()
+                return 
 
+        }catch(error){
+            console.log(error)
+            respuesta.status(500).send( JSON.stringify( {mensaje:"Error desconocido"} ) )
+        }
+        
+    }) // 
 
 }
