@@ -228,43 +228,40 @@ module.exports = class Logica {
      * @returns 
      */
      guardarZonas(zonas) {
-         var textoSQL = ""
-        zonas.forEach(zona => {
-        textoSQL += 'INSERT INTO ' + BDConstantes.TABLA_ZONAS.NOMBRE_TABLA + '(' + 
-        BDConstantes.TABLA_ZONAS.NOMBRE +', ' + BDConstantes.TABLA_ZONAS.MAPA + ', ' + BDConstantes.TABLA_ZONAS.X_SUPERIOR + ', ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + ', '  + BDConstantes.TABLA_ZONAS.X_INFERIOR + ', ' + BDConstantes.TABLA_ZONAS.Y_INFERIOR + 
-        ') VALUES("' + zona.nombre+'",' + zona.mapa+','+zona.xSuperior+','+zona.ySuperior+','+zona.xInferior+','+zona.yInferior+
-        ') ON DUPLICATE KEY UPDATE ' +
-        BDConstantes.TABLA_ZONAS.NOMBRE +'="'+zona.nombre+'", ' + BDConstantes.TABLA_ZONAS.MAPA +'='+zona.mapa+', ' + 
-        BDConstantes.TABLA_ZONAS.X_SUPERIOR + '='+zona.xSuperior+', ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + '='+zona.ySuperior+', ' + 
-        BDConstantes.TABLA_ZONAS.X_INFERIOR + '='+zona.xInferior+', '+ 
-        BDConstantes.TABLA_ZONAS.Y_INFERIOR + '='+zona.yInferior+'; '
-        });
+        var textoSQL = ""
+        let inserts = []
+       zonas.forEach(zona => {
+       textoSQL += 'INSERT INTO ' + BDConstantes.TABLA_ZONAS.NOMBRE_TABLA + '(' + 
+       BDConstantes.TABLA_ZONAS.NOMBRE +', ' + BDConstantes.TABLA_ZONAS.MAPA + ', ' + BDConstantes.TABLA_ZONAS.X_SUPERIOR + ', ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + ', '  + BDConstantes.TABLA_ZONAS.X_INFERIOR + ', ' + BDConstantes.TABLA_ZONAS.Y_INFERIOR + 
+       ') VALUES(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE ' +
+       BDConstantes.TABLA_ZONAS.NOMBRE +"='"+zona.nombre+"', " + BDConstantes.TABLA_ZONAS.MAPA +'='+zona.mapa+', ' + 
+       BDConstantes.TABLA_ZONAS.X_SUPERIOR + '='+zona.xSuperior+', ' + BDConstantes.TABLA_ZONAS.Y_SUPERIOR + '='+zona.ySuperior+', ' + 
+       BDConstantes.TABLA_ZONAS.X_INFERIOR + '='+zona.xInferior+', '+ 
+       BDConstantes.TABLA_ZONAS.Y_INFERIOR + '='+zona.yInferior+';'
 
-        let sql = mysql.format(textoSQL);
-        console.log(sql)
-        return new Promise( (resolver, rechazar) => {
-            this.laConexion.query( 
-                sql,
-                function( err,res,fields ) {
-                    if(!err){
-                        // return 
-                        if(res.affectedRows == 0){
-                            rechazar({errno:1452})
-                        }else{
-                            resolver(res)
-                        }
-                        
-    
-                    }else{
-                        
-                        rechazar(err)
-                    }
-                    
-                }
-               )//query
-            })// promise
+       inserts.push(zona.nombre, zona.mapa, zona.xSuperior, zona.ySuperior, zona.xInferior, zona.yInferior)
+       });
+       let sql = mysql.format(textoSQL,inserts);
 
-    } // ()guardarZona
+       console.log(sql)
+       return new Promise( (resolver, rechazar) => {
+           this.laConexion.query( 
+               sql,
+               function( err,res,fields ) {
+                   if(!err){
+                       // return 
+                       if(res.affectedRows == 0){
+                           rechazar({errno:1452})
+                       }else{
+                           resolver(res)
+                       }
+                   }else{
+                       rechazar(err)
+                   }
+               }
+              )//query
+           })// promise
+   } // ()guardarZona
 
     // .................................................................
     // 
