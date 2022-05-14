@@ -74,12 +74,12 @@ describe( "==================================================\n\t\t\t Test\n  ==
             .expect(200)
             .end((err, response)=>{
 
-                let parametrosFuncion = publicarStub.args[0] // se llama a la funcion los parametros eseprables
+                let parametrosFuncion = publicarStub.args[0] // se llama a la funcion los parametros esperables
 
                 expect(publicarStub).to.have.been.calledOnce; // se llamo a guardarMapa
-                expect(parametrosFuncion[0]).to.eql(idMapaEsperable)// mediciones que se le pasan a publicar mediciones
-                expect(parametrosFuncion[1]).to.eql(imagenEsperable)// mediciones que se le pasan a publicar mediciones
-                expect(parametrosFuncion[2]).to.eql(resolucion)// resolucion que se le pasa a publicar mediciones
+                expect(parametrosFuncion[0]).to.eql(idMapaEsperable)// id del mapa que se le pasan a publicar mapa
+                expect(parametrosFuncion[1]).to.eql(imagenEsperable)// imagen que se le pasan a publicar mapa
+                expect(parametrosFuncion[2]).to.eql(resolucion)// resolucion que se le pasa a publicar mapa
                 expect(response.statusCode).equal(200)
                 done()
             })
@@ -105,12 +105,12 @@ describe( "==================================================\n\t\t\t Test\n  ==
             .expect(500)
             .end((err, response)=>{
 
-                let parametrosFuncion = publicarStub.args[0] // se llama a la funcion los parametros eseprables
+                let parametrosFuncion = publicarStub.args[0] // se llama a la funcion los parametros esperables
 
                 expect(publicarStub).to.have.been.calledOnce; // se llamo a guardarMapa
-                expect(parametrosFuncion[0]).to.eql(idMapaEsperable)// mediciones que se le pasan a publicar mediciones
-                expect(parametrosFuncion[1]).to.eql(imagenEsperable)// mediciones que se le pasan a publicar mediciones
-                expect(parametrosFuncion[2]).to.eql(resolucion)// resolucion que se le pasa a publicar mediciones
+                expect(parametrosFuncion[0]).to.eql(idMapaEsperable)// id del mapa que se le pasan a publicar mapa
+                expect(parametrosFuncion[1]).to.eql(imagenEsperable)// imagen que se le pasan a publicar mapa
+                expect(parametrosFuncion[2]).to.eql(resolucion)// resolucion que se le pasa a publicar mapa
                 expect(response.statusCode).equal(500)
                 expect(response.text).equal('{"mensaje":"No existe un mapa con ese id"}'); // mensaje de ok
                 done();
@@ -200,6 +200,169 @@ describe( "==================================================\n\t\t\t Test\n  ==
             })
     })
 
-   
+    it('PUT/producto?idproducto?idzona actualiza correctamente devuelve 200',function (done){
+    
+        // lo que le paso a la funcion
+        let bodyPost ={
+                    "idProducto":1,
+                    "nombre":"zapatos",
+                    "idZona":"transportista",
+                    "cantidad":76,
+                    "precio":2
+        }
+        
+        let publicarStub = sinon.stub(laLogica, 'actualizarStockById').resolves({});
+
+        request(app).put('/producto')
+            .send(bodyPost)
+            .expect(200)
+            .end((err, response)=>{
+            
+
+                let parametrosFuncion = publicarStub.args[0] // se llama a la funcion los parametros esperables
+
+                expect(publicarStub).to.have.been.calledOnce; // se llamo a actualizarStockById
+                expect(parametrosFuncion[0]).to.eql(1)
+                expect(parametrosFuncion[1]).to.eql("zapatos")
+                expect(parametrosFuncion[2]).to.eql("transportista")
+                expect(parametrosFuncion[3]).to.eql(76)
+                expect(parametrosFuncion[4]).to.eql(2)
+                expect(response.statusCode).equal(200)
+                expect(response.text).equal('{"mensaje":"El stock se ha actualizado correctamente"}'); // mensaje de ok
+                done()
+            })
+    })
+
+    it('PUT/producto?idproducto?idzona producto no existe pero si zona, crea el objeto devuelve 200',function (done){
+    
+        // lo que le paso a la funcion
+        let bodyPost ={
+                    "idProducto":756,
+                    "nombre":"prueba",
+                    "idZona":"transportista",
+                    "cantidad":76,
+                    "precio":2
+        }
+        
+        let publicarStub = sinon.stub(laLogica, 'actualizarStockById').resolves({});
+
+        request(app).put('/producto?idproducto?nombre?idzona?cantidad?precio')
+            .send(bodyPost)
+            .expect(200)
+            .end((err, response)=>{
+
+                let parametrosFuncion = publicarStub.args[0] // se llama a la funcion los parametros esperables
+
+                expect(publicarStub).to.have.been.calledOnce; // se llamo a actualizarStockById
+                expect(parametrosFuncion[0]).to.eql(756)
+                expect(parametrosFuncion[1]).to.eql("prueba")
+                expect(parametrosFuncion[2]).to.eql("transportista")
+                expect(parametrosFuncion[3]).to.eql(76)
+                expect(parametrosFuncion[4]).to.eql(2)
+                expect(response.statusCode).equal(200)
+                expect(response.text).equal('{"mensaje":"El stock se ha actualizado correctamente"}'); // mensaje de ok
+                done()
+            })
+    })
+    
+    it('PUT/producto?idproducto?nombre?idzona?cantidad?precio no se le manda ids devuelve 400',function (done){
+        // lo que le paso a la funcion
+        let bodyPost ={
+            "idProducto":null,
+            "nombre":"prueba",
+            "idZona":null,
+            "cantidad":76,
+            "precio":2
+        }
+
+        let publicarStub = sinon.stub(laLogica, 'actualizarStockById').rejects({err:400});
+
+        request(app).put('/producto?idproducto?nombre?idzona?cantidad?precio')
+            .send(bodyPost)
+            .expect(400)
+            .end((err, response)=>{
+
+                expect(response.statusCode).equal(400)
+                expect(publicarStub).to.not.have.been.calledOnce; // no se llamo a actualizarStockById
+                expect(response.text).equal('{"mensaje":"Falta algun parametro"}'); // mensaje de ok
+                done();
+            })
+        
+    })
+
+    it('PUT/producto?idproducto?nombre?idzona?cantidad?precio la zona y el objeto no existe devuelve 1452',function (done){
+        // lo que le paso a la funcion
+        let bodyPost ={
+            "idProducto":600,
+            "nombre":"prueba",
+            "idZona":"zapatos",
+            "cantidad":76,
+            "precio":2
+        }
+
+        let publicarStub = sinon.stub(laLogica, 'actualizarStockById').rejects({errno:1452});
+
+        request(app).put('/producto?idproducto?nombre?idzona?cantidad?precio')
+            .send(bodyPost)
+            .expect(500)
+            .end((err, response)=>{
+
+                let parametrosFuncion = publicarStub.args[0] // se llama a la funcion los parametros esperables
+
+                expect(publicarStub).to.have.been.calledOnce; // se llamo a actualizarStock
+                expect(parametrosFuncion[0]).to.eql(600)
+                expect(parametrosFuncion[1]).to.eql("prueba")
+                expect(parametrosFuncion[2]).to.eql("zapatos")
+                expect(parametrosFuncion[3]).to.eql(76)
+                expect(parametrosFuncion[4]).to.eql(2)
+                expect(response.statusCode).equal(500)
+                expect(response.text).equal('{"mensaje":"No existe un producto o zona con ese id"}'); // mensaje de ok
+                done();
+            })
+
+    })
+
+    it('GET/productos?idmapa id correcto devuelve 200',function (done){
+
+        let jsonEsperado =  [{
+            id: 1,
+            nombre: 'zapatos',
+            cantidad: 37,
+            precio: 29,
+            zona: 'transportista'
+          },
+          {
+            id: 3,
+            nombre: 'prueba',
+            cantidad: 1,
+            precio: 5.5,
+            zona: 'transportista'
+          },
+          {
+            id: 800,
+            nombre: 'prueba',
+            cantidad: 3,
+            precio: 5.5,
+            zona: 'transportista'
+          }]
+
+
+        let publicarStub = sinon.stub(laLogica, 'obtenerTodosProductos').resolves(jsonEsperado);
+
+        
+        request(app).get('/productos?idmapa=1')
+            .expect(200)
+            .end((err, response)=>{
+
+                let parametrosFuncion = publicarStub.args[0] // se llama a la funcion los parametros esperables
+
+                expect(publicarStub).to.have.been.calledOnce; // se llamo a obtenerTodosProductos
+                expect(parametrosFuncion[0]).to.eql("1")
+                expect(response.statusCode).equal(200)
+                expect(response.body).to.eql(jsonEsperado); // json bien montado
+                done();
+            })
+
+    })
 
 }) // describe
