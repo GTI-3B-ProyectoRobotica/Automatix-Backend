@@ -242,7 +242,7 @@ module.exports.cargar = function(servidorExpress, laLogica){
             }
 
         }catch(error){
-            respuesta.status(500).send( JSON.stringify( {mensaje:"Error desconocido"} ) )
+            respuesta.status(500).send( JSON.stringify( {mensaje:"Error desconocido: "+error} ) )
             
         }
 

@@ -317,7 +317,7 @@ module.exports = class Logica {
      * 
      */
      obtenerTodosProductos(idMapa) {
-        var textoSQL ='SELECT * FROM ' + BDConstantes.TABLA_PRODUCTO.NOMBRE_TABLA + ' WHERE ' + BDConstantes.TABLA_PRODUCTO.ZONA + '=(SELECT '+
+        var textoSQL ='SELECT * FROM ' + BDConstantes.TABLA_PRODUCTO.NOMBRE_TABLA + ' WHERE ' + BDConstantes.TABLA_PRODUCTO.ZONA + ' in (SELECT '+
         BDConstantes.TABLA_ZONAS.NOMBRE + ' FROM ' + BDConstantes.TABLA_ZONAS.NOMBRE_TABLA + ' WHERE ' + BDConstantes.TABLA_ZONAS.MAPA + '=?)';
         
         let inserts = [idMapa]
@@ -330,7 +330,7 @@ module.exports = class Logica {
                         resolver(res)
 
                     }else{
-                        rechazar("Error desconocido")
+                        rechazar(err)
                     }
                     
                 })
