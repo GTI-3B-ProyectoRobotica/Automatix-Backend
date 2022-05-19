@@ -221,11 +221,11 @@ module.exports.cargar = function(servidorExpress, laLogica){
     // .......................................................
     servidorExpress.get('/productos', async function(peticion, respuesta) {
 
-        console.log("GET */productos?idmapa");
+        console.log("GET */productos?idMapa");
 
         try{
 
-            let idMapa = peticion.query.idmapa
+            let idMapa = peticion.query.idMapa
             if(idMapa==null){
                 // no estan todo los parametros obligatorios
                 respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
