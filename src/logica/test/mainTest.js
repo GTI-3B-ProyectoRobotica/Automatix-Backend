@@ -245,7 +245,7 @@ describe( "Test ", function() {
         assert.equal(error,null, "Este mapa no existe??")
         assert.equal(stub.calledOnce,true,"No se llamo al metodo obtenerProductos?")
         // comprobamos que se crea bien la sentencia sql
-        assert.equal(stub.calledWith("SELECT * FROM producto WHERE zona=(SELECT nombre FROM zona WHERE mapa=1)"),true,"No se montó bien la query?")  
+        assert.equal(stub.calledWith("SELECT * FROM producto WHERE zona in (SELECT nombre FROM zona WHERE mapa=1)"),true,"No se montó bien la query?")  
     })// it
 
     it("Obtener todos los productos de un mapa inexistente",async function(){
@@ -269,7 +269,79 @@ describe( "Test ", function() {
         assert.equal(error,null, "No existe el mapa, pero no deberia mostrar productos")
         assert.equal(stub.calledOnce,true,"No se llamo al metodo obtenerProductos?")
         // comprobamos que se crea bien la sentencia sql
-        assert.equal(stub.calledWith("SELECT * FROM producto WHERE zona=(SELECT nombre FROM zona WHERE mapa=589)"),true,"No se montó bien la query?")  
+        assert.equal(stub.calledWith("SELECT * FROM producto WHERE zona in (SELECT nombre FROM zona WHERE mapa=589)"),true,"No se montó bien la query?")  
+    })// it
+
+    it("Borrar zona que existe",async function(){
+    
+        // creamos el mock de la conexion
+        const conexion = {
+            query: async function(textoSQL,funcion){}
+        }; // objeto mock, cuando llame a objetos que usan la conexion no pasara nada
+
+        const stub = sinon.stub(conexion,"query").callsArgWith(1,null,[]) // index, error, resultado
+        // creamos la logica con el metodo conexion moqueado
+        let laLogica = new Logica(conexion);
+
+        var nombre = "zona2"
+        var error = null
+        try {
+            await laLogica.borrarZona(nombre)    
+        } catch(err){
+            error = err
+        }
+        assert.equal(error,null, "Esta zona no existe??")
+        assert.equal(stub.calledOnce,true,"No se llamo al borrarZona?")
+        // comprobamos que se crea bien la sentencia sql
+        assert.equal(stub.calledWith("DELETE FROM zona WHERE nombre='zona2'"),true,"No se montó bien la query?")  
+    })// it
+
+    it("Borrar zona sin zona no deberia dar problema",async function(){
+    
+        // creamos el mock de la conexion
+        const conexion = {
+            query: async function(textoSQL,funcion){}
+        }; // objeto mock, cuando llame a objetos que usan la conexion no pasara nada
+
+        const stub = sinon.stub(conexion,"query").callsArgWith(1,null,[]) // index, error, resultado
+        // creamos la logica con el metodo conexion moqueado
+        let laLogica = new Logica(conexion);
+
+        var nombre = null
+        var error = null
+        try {
+            await laLogica.borrarZona(nombre)    
+        } catch(err){
+            error = err
+        }
+        assert.equal(error,null, "¿Error desconocido?")
+        assert.equal(stub.calledOnce,true,"No se llamo al borrarZona?")
+        // comprobamos que se crea bien la sentencia sql
+        assert.equal(stub.calledWith("DELETE FROM zona WHERE nombre=NULL"),true,"No se montó bien la query?")  
+    })// it
+
+    it("Borrar zona sin zona no deberia dar problema",async function(){
+    
+        // creamos el mock de la conexion
+        const conexion = {
+            query: async function(textoSQL,funcion){}
+        }; // objeto mock, cuando llame a objetos que usan la conexion no pasara nada
+
+        const stub = sinon.stub(conexion,"query").callsArgWith(1,null,[]) // index, error, resultado
+        // creamos la logica con el metodo conexion moqueado
+        let laLogica = new Logica(conexion);
+
+        var nombre = "zona9"
+        var error = null
+        try {
+            await laLogica.borrarZona(nombre)    
+        } catch(err){
+            error = err
+        }
+        assert.equal(error,null, "¿Error desconocido?")
+        assert.equal(stub.calledOnce,true,"No se llamo al borrarZona?")
+        // comprobamos que se crea bien la sentencia sql
+        assert.equal(stub.calledWith("DELETE FROM zona WHERE nombre='zona9'"),true,"No se montó bien la query?")  
     })// it
 
     
