@@ -248,4 +248,31 @@ module.exports.cargar = function(servidorExpress, laLogica){
 
     })
 
+
+    // .......................................................
+    // DELETE /zona
+    // .......................................................
+    servidorExpress.delete('/zona', async function( peticion, respuesta ){
+        console.log( " * DELETE /zona?nombre" )
+       
+        try{
+            let nombre = peticion.query.nombre;
+            if(nombre==null){
+                // no estan todo los parametros obligatorios
+                respuesta.status(400).send( JSON.stringify( {mensaje:"Falta algun parametro"} ) )
+                return
+            } else{
+                 // todo ok 
+                await laLogica.borrarZona(nombre)
+                respuesta.status(200).send( JSON.stringify( {mensaje:"La zona se ha borrado correctamente"} ) )
+                return 
+            }
+                     
+        }catch(error){
+            console.log(error)
+            respuesta.status(500).send( JSON.stringify( {mensaje:"Error desconocido"} ) )
+        }
+        
+    }) // 
+
 }
