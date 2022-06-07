@@ -79,7 +79,6 @@ module.exports = class Logica {
         var textoSQL ='update '+BDConstantes.TABLA_MAPA.NOMBRE_TABLA +' set ' + BDConstantes.TABLA_MAPA.IMAGEN  + '=?,'+ BDConstantes.TABLA_MAPA.RESOLUCION + '=? where '+BDConstantes.TABLA_MAPA.ID+'=?';
         let inserts = [imagenBase64,resolucion,idMapa]
         let sql = mysql.format(textoSQL, inserts);
-        console.log(sql)
         return new Promise( (resolver, rechazar) => {
             this.laConexion.query( 
                 sql,
@@ -103,7 +102,6 @@ module.exports = class Logica {
             })// promise
 
     } // ()guardarMapa
-
 
     // .................................................................
     // 
@@ -242,7 +240,6 @@ module.exports = class Logica {
        });
        let sql = mysql.format(textoSQL,inserts);
 
-       console.log(sql)
        return new Promise( (resolver, rechazar) => {
            this.laConexion.query( 
                sql,
@@ -261,6 +258,41 @@ module.exports = class Logica {
               )//query
            })// promise
    } // ()guardarZona
+
+
+       // .................................................................
+    // 
+    // nombre:texto -->
+    // borrarZona() --> 
+    // .................................................................
+    /**
+     * borrar zona de la base de datos 
+     * 
+     * @param {string} nombre nombre de la zona que hace referencia
+     * 
+     */
+     borrarZona( nombre ) {
+        var textoSQL ='DELETE FROM '+BDConstantes.TABLA_ZONAS.NOMBRE_TABLA + ' WHERE '+BDConstantes.TABLA_ZONAS.NOMBRE+'=?';
+        let inserts = [nombre]
+        let sql = mysql.format(textoSQL, inserts);
+        console.log(sql)
+        return new Promise( (resolver, rechazar) => {
+            this.laConexion.query( 
+                sql,
+                function( err,res,fields ) {
+                    if(!err){
+                        // return 
+                            resolver(res)
+                    }
+                    rechazar("Error desconocido")    
+                    } 
+                    
+               )//query
+            })// promise
+
+    } // ()borrarZona
+
+
 
     // .................................................................
     // 
@@ -285,7 +317,6 @@ module.exports = class Logica {
         
         
         let sql = mysql.format(textoSQL, inserts);
-        console.log(sql)
 
         return new Promise( (resolver, rechazar) => {
             this.laConexion.query(sql, function( err,res,fields ) {

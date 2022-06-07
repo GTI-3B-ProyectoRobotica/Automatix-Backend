@@ -365,4 +365,56 @@ describe( "==================================================\n\t\t\t Test\n  ==
 
     })
 
+    it('DELETE/zona?nombre devuelve 200',function (done){
+    
+        
+        let publicarStub = sinon.stub(laLogica, 'borrarZona').resolves({});
+
+        request(app).delete('/zona?nombre=zona1')
+            .expect(200)
+            .end((err, response)=>{
+
+                let parametrosFuncion = publicarStub.args[0] // se llama a la funcion los parametros esperables
+
+                expect(publicarStub).to.have.been.calledOnce; // se llamo a borrarZona
+                expect(parametrosFuncion[0]).to.eql("zona1")
+                expect(response.statusCode).equal(200)
+                expect(response.text).equal('{"mensaje":"La zona se ha borrado correctamente"}'); // mensaje de ok
+                done()
+            })
+    })
+    
+    it('DELETE/zona?nombre devuelve 200',function (done){
+    
+        
+        let publicarStub = sinon.stub(laLogica, 'borrarZona').resolves({});
+
+        request(app).delete('/zona?nombre=zona9')
+            .expect(200)
+            .end((err, response)=>{
+
+                let parametrosFuncion = publicarStub.args[0] // se llama a la funcion los parametros esperables
+
+                expect(publicarStub).to.have.been.calledOnce; // se llamo a borrarZona
+                expect(parametrosFuncion[0]).to.eql("zona9")
+                expect(response.statusCode).equal(200)
+                expect(response.text).equal('{"mensaje":"La zona se ha borrado correctamente"}'); // mensaje de ok
+                done()
+            })
+    })
+
+    it('DELETE/zona?nombre devuelve 400',function (done){
+        
+        let publicarStub = sinon.stub(laLogica, 'borrarZona').rejects({err:400});
+
+        request(app).delete('/zona')
+            .expect(400)
+            .end((err, response)=>{
+                expect(response.statusCode).equal(400)
+                expect(publicarStub).to.not.have.been.calledOnce; // no se llamo a borrarZona
+                expect(response.text).equal('{"mensaje":"Falta algun parametro"}'); // mensaje de falta parametros
+                done();
+            })
+    })
+
 }) // describe
